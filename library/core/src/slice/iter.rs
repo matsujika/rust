@@ -971,6 +971,127 @@ where
 #[stable(feature = "slice_rsplit", since = "1.27.0")]
 impl<T, P> FusedIterator for RSplitMut<'_, T, P> where P: FnMut(&T) -> bool {}
 
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+#[derive(Clone)]
+pub struct RSplitInclusive<'a, T: 'a, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    inner: SplitInclusive<'a, T, P>,
+}
+
+impl<'a, T: 'a, P: FnMut(&T) -> bool> RSplitInclusive<'a, T, P> {
+    #[inline]
+    pub(super) fn new(slice: &'a [T], pred: P) -> Self {
+        Self { inner: SplitInclusive::new(slice, pred) }
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<T: fmt::Debug, P> fmt::Debug for RSplitInclusive<'_, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RSplitInclusive")
+            .field("v", &self.inner.v)
+            .field("finished", &self.inner.finished)
+            .finish()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<'a, T, P> Iterator for RSplitInclusive<'a, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    type Item = &'a [T];
+
+    #[inline]
+    fn next(&mut self) -> Option<&'a [T]> {
+        self.inner.next_back()
+    }
+
+    #[inline]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.inner.size_hint()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<'a, T, P> DoubleEndedIterator for RSplitInclusive<'a, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    #[inline]
+    fn next_back(&mut self) -> Option<&'a [T]> {
+        self.inner.next()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<T, P> FusedIterator for RSplitInclusive<'_, T, P> where P: FnMut(&T) -> bool {}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+pub struct RSplitInclusiveMut<'a, T: 'a, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    inner: SplitInclusiveMut<'a, T, P>,
+}
+
+impl<'a, T: 'a, P: FnMut(&T) -> bool> RSplitInclusiveMut<'a, T, P> {
+    #[inline]
+    pub(super) fn new(slice: &'a mut [T], pred: P) -> Self {
+        Self { inner: SplitInclusiveMut::new(slice, pred) }
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<T: fmt::Debug, P> fmt::Debug for RSplitInclusiveMut<'_, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("RSplitInclusiveMut")
+            .field("v", &self.inner.v)
+            .field("finished", &self.inner.finished)
+            .finish()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<'a, T, P> Iterator for RSplitInclusiveMut<'a, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    type Item = &'a mut [T];
+
+    #[inline]
+    fn next(&mut self) -> Option<&'a mut [T]> {
+        self.inner.next_back()
+    }
+
+    #[inline]
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.inner.size_hint()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<'a, T, P> DoubleEndedIterator for RSplitInclusiveMut<'a, T, P>
+where
+    P: FnMut(&T) -> bool,
+{
+    #[inline]
+    fn next_back(&mut self) -> Option<&'a mut [T]> {
+        self.inner.next()
+    }
+}
+
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+impl<T, P> FusedIterator for RSplitInclusiveMut<'_, T, P> where P: FnMut(&T) -> bool {}
+
 /// An private iterator over subslices separated by elements that
 /// match a predicate function, splitting at most a fixed number of
 /// times.

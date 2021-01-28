@@ -63,6 +63,9 @@ pub use iter::{GroupBy, GroupByMut};
 #[stable(feature = "split_inclusive", since = "1.51.0")]
 pub use iter::{SplitInclusive, SplitInclusiveMut};
 
+#[unstable(feature = "rsplit_inclusive", issue = "none")]
+pub use iter::{RSplitInclusive, RSplitInclusiveMut};
+
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use raw::{from_raw_parts, from_raw_parts_mut};
 
@@ -1805,6 +1808,24 @@ impl<T> [T] {
         F: FnMut(&T) -> bool,
     {
         RSplitMut::new(self, pred)
+    }
+
+    #[unstable(feature = "rsplit_inclusive", issue = "none")]
+    #[inline]
+    pub fn rsplit_inclusive<F>(&self, pred: F) -> RSplitInclusive<'_, T, F>
+    where
+        F: FnMut(&T) -> bool,
+    {
+        RSplitInclusive::new(self, pred)
+    }
+
+    #[unstable(feature = "rsplit_inclusive", issue = "none")]
+    #[inline]
+    pub fn rsplit_inclusive_mut<F>(&mut self, pred: F) -> RSplitInclusiveMut<'_, T, F>
+    where
+        F: FnMut(&T) -> bool,
+    {
+        RSplitInclusiveMut::new(self, pred)
     }
 
     /// Returns an iterator over subslices separated by elements that match
