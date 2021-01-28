@@ -1700,15 +1700,15 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
         field: Ident,
         base: &'tcx hir::Expr<'tcx>,
         expr: &'tcx hir::Expr<'tcx>,
-        expr_t: Ty<'tcx>,
+        expr_ty: Ty<'tcx>,
     ) {
         debug!(
             "ban_nonexisting_field: field={:?}, base={:?}, expr={:?}, expr_ty={:?}",
-            field, base, expr, expr_t
+            field, base, expr, expr_ty
         );
-        let mut err = self.no_such_field_err(field.span, field, expr_t);
+        let mut err = self.no_such_field_err(field.span, field, expr_ty);
 
-        match *expr_t.peel_refs().kind() {
+        match *expr_ty.peel_refs().kind() {
             ty::Array(_, len) => {
                 self.maybe_suggest_array_indexing(&mut err, expr, base, field, len);
             }
@@ -1722,7 +1722,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                 self.point_at_param_definition(&mut err, param_ty);
             }
             ty::Opaque(_, _) => {
-                self.suggest_await_on_field_access(&mut err, field, base, expr_t.peel_refs());
+                self.suggest_await_on_field_access(&mut err, field, base, expr_ty.peel_refs());
             }
             _ => {}
         }
